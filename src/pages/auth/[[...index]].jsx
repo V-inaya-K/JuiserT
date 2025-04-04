@@ -13,12 +13,6 @@ export default function AuthPage() {
           <SignIn routing="path" path="/auth/sign-in"  />
         )}
 
-        {/* <button
-          className="mt-4 text-blue-500"
-          onClick={() => setIsSignUp(!isSignUp)}
-        >
-          {isSignUp ? "Already have an account? Sign in" : "Don't have an account? Sign up"}
-        </button> */}
       </div>
     </div>
   );
