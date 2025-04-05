@@ -36,7 +36,7 @@ const FeaturedVendors = () => {
         <Link href="/vendors" className="text-primary text-sm">View All</Link>
       </div>
       
-      <div className="grid gap-4">
+      <div className="grid gap-4 text-black dark:text-black">
         {vendors.map(vendor => (
           <Link href={`/vendor/${vendor.id}`} key={vendor.id} className="juice-card flex bg-white">
             <div className="w-24 h-24 bg-gray-200 relative">

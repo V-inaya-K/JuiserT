@@ -57,7 +57,7 @@ const AIRecommendations = () => {
         <Link href="/recommendations" className="text-primary text-sm">View All</Link>
       </div>
       
-      <div className="space-y-4">
+      <div className="space-y-4 text-black dark:text-black">
         {aiRecommendations.map(recommendation => (
           <div key={recommendation.id} className="bg-white rounded-xl shadow-sm p-4">
             <div className="flex justify-between items-start">

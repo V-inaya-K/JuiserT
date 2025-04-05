@@ -44,7 +44,7 @@ const RecommendedJuices = () => {
         <Link href="/juices" className="text-primary text-sm">View All</Link>
       </div>
       
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4 text-black dark:text-black">
         {juices.map(juice => (
           <Link href={`/juice/${juice.id}`} key={juice.id} className="juice-card bg-white">
             <div className="h-36 bg-gray-100 relative">

@@ -2,8 +2,6 @@
 
 JoosT is an innovative juice startup application that blends health, affordability, and technology to provide a seamless and engaging experience for both customers and vendors. The app operates on a QR-based dine-in model, allowing customers to scan a QR code at partner outlets to conveniently order fresh, healthy juices at competitive prices.
 
-![JoosT App Screenshot](public/screenshots/joost-app-home.jpg)
-
 ## 🌟 Key Features
 
 - **QR-Based Ordering System**: Scan QR codes at affiliated vendors to place orders
@@ -18,6 +16,7 @@ JoosT is an innovative juice startup application that blends health, affordabili
 ## 🚀 Tech Stack
 
 - **Frontend**: Next.js, React, Tailwind CSS
+- **Authentication**: Clerk
 - **UI Components**: Custom components with Material Symbols icons
 - **State Management**: React Hooks and Context API
 - **Routing**: Next.js Pages Router
@@ -27,8 +26,7 @@ JoosT is an innovative juice startup application that blends health, affordabili
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/joost-app.git
-   cd joost-app
+   git clone https://github.com/V-inaya-K/JuiserT.git
    ```
 
 2. **Install dependencies**
@@ -41,8 +39,6 @@ JoosT is an innovative juice startup application that blends health, affordabili
    npm run dev
    ```
 
-4. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
-
-## 📁 Project Structure
+## Havings Issues??
+- Mail me at : vinku2004@gmail.com
 

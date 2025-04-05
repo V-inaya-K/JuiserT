@@ -124,20 +124,6 @@ const SideNavigation = () => {
           <span className="material-symbols-rounded mr-3">help</span>
           <span className="text-sm font-medium">Help & Support</span>
         </Link>
-
-        {/* 🌙 Dark Mode Toggle */}
-        <button
-          onClick={toggleDarkMode}
-          className="flex w-full items-center px-2 py-2 text-gray-700 dark:text-yellow-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg mt-2"
-        >
-          <span className="material-symbols-rounded mr-3">
-            {darkMode ? "dark_mode" : "light_mode"}
-          </span>
-          <span className="text-sm font-medium">
-            {darkMode ? "Dark Mode On" : "Dark Mode Off"}
-          </span>
-        </button>
-
         {/* 🔴 Logout Button */}
         <button 
           onClick={() => clerk.signOut(() => router.push('/auth'))} 

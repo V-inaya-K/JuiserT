@@ -86,13 +86,13 @@ export default function FeaturesPage() {
 
   return (
     <AppLayout title="Features - JoosT">
-      <div className="py-4 pb-24">
+      <div className="py-4 pb-24 ">
         <h1 className="text-2xl font-semibold mb-6">Discover JoosT</h1>
         
         {featureGroups.map((group, index) => (
           <div key={index} className="mb-8">
             <h2 className="text-lg font-semibold mb-4">{group.title}</h2>
-            <div className="space-y-3">
+            <div className="space-y-3 text-black dark:text-black">
               {group.features.map((feature, featureIndex) => (
                 <Link 
                   href={feature.path} 

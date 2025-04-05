@@ -108,7 +108,7 @@ const SponsoredAds = () => {
         </div>
       </div>
       
-      <div className="text-xs text-center text-gray-500 mt-2">
+      <div className="text-xs text-center text-gray-500 mt-2 text-black dark:text-white">
         Sponsored ads help keep our juice prices affordable
       </div>
     </div>

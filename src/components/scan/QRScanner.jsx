@@ -29,7 +29,7 @@ const QRScanner = ({ onScan }) => {
               </div>
               
               <div className="mt-4 text-center">
-                <p className="text-gray-700 text-sm">Position QR code within the frame</p>
+                <p className="text-gray-700 text-sm text-black dark:text-white">Position QR code within the frame</p>
               </div>
             </>
           ) : (

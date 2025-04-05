@@ -38,7 +38,7 @@ export default function OrdersPage() {
       <div className="py-4">
         <h1 className="text-2xl font-semibold mb-4">My Orders</h1>
         
-        <div className="bg-gray-100 rounded-lg p-1 flex mb-6">
+        <div className="bg-gray-100 dark:bg-gray-400 rounded-lg p-1 flex mb-6 text-black dark:text-black">
           <button 
             className={`flex-1 py-2 rounded-md text-center ${activeTab === 'active' ? 'bg-white shadow-sm' : ''}`}
             onClick={() => setActiveTab('active')}
@@ -46,7 +46,7 @@ export default function OrdersPage() {
             Active
           </button>
           <button 
-            className={`flex-1 py-2 rounded-md text-center ${activeTab === 'past' ? 'bg-white shadow-sm' : ''}`}
+            className={`flex-1 py-2 rounded-md text-center ${activeTab === 'past' ? 'bg-white shadow-sm dark:bg' : ''}`}
             onClick={() => setActiveTab('past')}
           >
             Past Orders
@@ -59,11 +59,11 @@ export default function OrdersPage() {
               <span className="material-symbols-rounded text-gray-400 text-4xl">receipt_long</span>
             </div>
             <h3 className="text-lg font-medium">No active orders</h3>
-            <p className="text-gray-500 text-center mt-2">You don't have any active orders right now</p>
+            <p className="text-gray-500 text-center mt-2 text-black dark:text-white">You don't have any active orders right now</p>
             <Link href="/" className="btn-primary mt-4">Order Now</Link>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-4 text-black dark:text-black">
             {orders.map(order => (
               <Link href={`/order/${order.id}`} key={order.id} className="block bg-white rounded-xl shadow-sm overflow-hidden">
                 <div className="p-4 border-b border-gray-100">

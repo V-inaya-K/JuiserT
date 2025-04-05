@@ -19,7 +19,7 @@ export default function ScanPage() {
     <AppLayout title="Scan QR Code - JoosT">
       <div className="py-4">
         <h1 className="text-2xl font-semibold text-center">Scan QR Code</h1>
-        <p className="text-gray-600 text-center mt-2">
+        <p className="text-gray-600 text-center mt-2 text-black dark:text-white">
           Scan the QR code at your table to place an order
         </p>
         

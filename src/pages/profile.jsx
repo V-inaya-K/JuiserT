@@ -1,11 +1,14 @@
 import React from "react";
 import AppLayout from "../components/layout/AppLayout";
 import Link from "next/link";
+import { useRouter } from 'next/router';
 import { useUser, UserButton , useClerk } from "@clerk/nextjs";
 
 export default function ProfilePage() {
   const { user } = useUser(); // Get the logged-in user
   const clerk = useClerk();
+  const router = useRouter();
+
 
   return (
     <AppLayout title="My Profile - JoosT">
@@ -27,7 +30,7 @@ export default function ProfilePage() {
 
             {/* User Name & Phone */}
             <div className="ml-4">
-              <h1 className="text-xl font-semibold">
+              <h1 className="text-black dark:text-black">
                 {user ? `${user.firstName} ${user.lastName}` : "Loading..."}
               </h1>
               <p className="text-gray-500">
@@ -54,10 +57,10 @@ export default function ProfilePage() {
         {/* Account Settings */}
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="p-4 border-b border-gray-100">
-            <h2 className="font-semibold">Account Settings</h2>
+            <h2 className="font-semibold text-black dark:text-black">Account Settings</h2>
           </div>
 
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-gray-100 text-black dark:text-black">
             <Link href="/profile/edit" className="flex items-center justify-between p-4">
               <div className="flex items-center">
                 <span className="material-symbols-rounded text-gray-500 mr-3">person</span>
