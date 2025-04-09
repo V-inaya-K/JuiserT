@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useCart } from '../../context/CartContext';
+
+
 
 const Header = () => {
+  const { cartCount } = useCart();
   const [showSearch, setShowSearch] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [location, setLocation] = useState("Fetching location...");
@@ -92,9 +96,16 @@ const Header = () => {
                 <Link href="/notifications" className="p-2 text-gray-600 dark:text-white">
                   <span className="material-symbols-rounded">notifications</span>
                 </Link>
-                <Link href="/cart" className="p-2 text-gray-600 dark:text-white">
-                  <span className="material-symbols-rounded">shopping_cart</span>
-                </Link>
+                <Link href="/checkout" className="relative">
+      <span className="material-symbols-rounded text-2xl cursor-pointer p-2 text-gray-600 dark:text-white">
+        shopping_cart
+      </span>
+      {cartCount > 0 && (
+        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+          {cartCount}
+        </span>
+      )}
+    </Link>
               </>
             )}
           </div>

@@ -1,256 +1,242 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import AppLayout from '../components/layout/AppLayout';
-import Link from 'next/link';
-
-// Sample cart items
-const cartItems = [
-  {
-    id: 1,
-    name: 'Green Detox',
-    price: 149,
-    quantity: 1,
-    customizations: ['No Sugar', 'Chia Seeds (+₹20)']
-  },
-  {
-    id: 3,
-    name: 'Citrus Immunity',
-    price: 129,
-    quantity: 2,
-    customizations: ['Regular', 'Large (450ml) (+₹50)']
-  }
-];
+import { useCart } from '../context/CartContext';
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const { cartItems, cartCount, removeFromCart, clearCart } = useCart();
+
   const [paymentMethod, setPaymentMethod] = useState('upi');
   const [promoCode, setPromoCode] = useState('');
   const [promoApplied, setPromoApplied] = useState(false);
-  
-  // Calculate subtotal
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
+
   const calculateSubtotal = () => {
     return cartItems.reduce((total, item) => {
       let itemPrice = item.price;
-      if (item.customizations.some(c => c.includes('Large'))) {
-        itemPrice += 50;
-      }
-      if (item.customizations.some(c => c.includes('Chia Seeds'))) {
-        itemPrice += 20;
-      }
-      return total + (itemPrice * item.quantity);
+
+      item.selectedOptions?.['Add-ons']?.forEach((addon) => {
+        const match = addon.match(/\+₹(\d+)/);
+        if (match?.[1]) itemPrice += parseInt(match[1]);
+      });
+
+      const sizeMatch = item.selectedOptions?.['Size']?.match(/\+₹(\d+)/);
+      if (sizeMatch?.[1]) itemPrice += parseInt(sizeMatch[1]);
+
+      return total + itemPrice * item.quantity;
     }, 0);
   };
-  
+
   const subtotal = calculateSubtotal();
-  const discount = promoApplied ? Math.round(subtotal * 0.10) : 0;
+  const discount = promoApplied ? Math.round(subtotal * 0.1) : 0;
   const deliveryFee = 30;
   const totalAmount = subtotal - discount + deliveryFee;
-  
+
   const handleApplyPromo = () => {
     if (promoCode.toLowerCase() === 'first10') {
       setPromoApplied(true);
     }
   };
-  
-  const handlePlaceOrder = () => {
-    // In a real app, this would submit the order to an API
-    router.push('/order-confirmation');
+
+  const handlePlaceOrder = async () => {
+    const res = await fetch('/api/create-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount: totalAmount * 100 }),
+    });
+
+    const data = await res.json();
+
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      amount: data.amount,
+      currency: 'INR',
+      name: 'JoosT Juices',
+      description: 'Fresh Juice Order',
+      order_id: data.id,
+      handler: function (response) {
+        clearCart();
+        router.push('/order-confirmation');
+      },
+      prefill: {
+        name: 'Customer Name',
+        email: 'customer@example.com',
+        contact: '9999999999',
+      },
+      theme: { color: '#10b981' },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
   };
-  
+
   return (
     <AppLayout title="Checkout - JoosT">
-      <div className="py-4 pb-24 lg:pb-6 max-w-2xl mx-auto">
+      <div className="py-4 pb-24 max-w-2xl mx-auto ">
         <div className="flex items-center mb-4">
           <button onClick={() => router.back()} className="mr-3">
             <span className="material-symbols-rounded">arrow_back</span>
           </button>
           <h1 className="text-2xl font-semibold">Checkout</h1>
         </div>
-        
-        {/* Order Items */}
-        <div className="bg-white rounded-xl shadow-sm p-4 mb-4">
-          <h2 className="font-medium text-gray-700 mb-3">Order Summary</h2>
-          
-          <div className="space-y-3">
-            {cartItems.map((item) => (
-              <div key={item.id} className="flex items-center justify-between pb-3 border-b border-gray-100">
-                <div className="flex items-start">
-                  <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
-                    <span className="material-symbols-rounded text-gray-500">local_drink</span>
-                  </div>
-                  <div>
-                    <h3 className="font-medium">{item.name}</h3>
-                    <div className="text-xs text-gray-500">
-                      {item.customizations.join(' • ')}
+
+        {cartItems.length === 0 ? (
+          <div className="text-center text-gray-500 mt-12 text-black dark:text-white">
+            Your cart is empty.
+          </div>
+        ) : (
+          <>
+            {/* Order Summary */}
+            <div className="bg-white rounded-xl shadow-sm p-4 mb-4 text-black dark:text-black">
+              <h2 className="font-medium text-gray-700 mb-3">Order Summary</h2>
+              <div className="space-y-3">
+                {cartItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="relative flex justify-between border-b pb-3"
+                  >
+                    <div>
+                      <div className="font-medium">{item.name}</div>
+
+                      {item.selectedOptions && (
+                        <div className="text-xs text-gray-500 mt-1">
+                          {Object.entries(item.selectedOptions).map(([label, value]) => (
+                            <div key={label}>
+                              <strong>{label}:</strong>{' '}
+                              {Array.isArray(value) ? value.join(', ') : value}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      <div className="text-sm text-gray-700 mt-1">
+                        Base: ₹{item.price} × {item.quantity || 1}
+                      </div>
+
+                      <div className="text-sm font-medium text-gray-800 mt-1">
+                        Subtotal: ₹
+                        {(() => {
+                          let base = item.price;
+                          let extra = 0;
+                          const quantity = item.quantity || 1;
+                          item.selectedOptions?.['Add-ons']?.forEach((addon) => {
+                            const match = addon.match(/\+₹(\d+)/);
+                            if (match?.[1]) extra += parseInt(match[1]);
+                          });
+
+                          const sizeMatch = item.selectedOptions?.['Size']?.match(/\+₹(\d+)/);
+                          if (sizeMatch?.[1]) extra += parseInt(sizeMatch[1]);
+
+                          return (base + extra) * quantity;
+                        })()}
+                      </div>
                     </div>
-                    <div className="text-sm mt-1">₹{item.price} × {item.quantity}</div>
+
+                    {/* 🗑️ Remove button */}
+                    <button
+                      onClick={() => removeFromCart(item.id)}
+                      className="absolute top-0 right-0 text-xs text-red-500 hover:underline"
+                    >
+                      Remove
+                    </button>
                   </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Promo Code */}
+            <div className="bg-white rounded-xl shadow-sm p-4 mb-4">
+              <h2 className="font-medium text-gray-700 mb-3">Promo Code</h2>
+              <div className="flex p-4">
+                <input
+                  type="text"
+                  className="flex-1 border border-gray-300 rounded-l-lg px-3 py-2 text-black dark:text-black"
+                  placeholder="Enter promo code"
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value)}
+                />
+                <button
+                  className="bg-primary text-white px-4 py-2 rounded-r-lg"
+                  onClick={handleApplyPromo}
+                >
+                  Apply
+                </button>
+              </div>
+              {promoApplied && (
+                <div className="mt-2 text-green-600 text-sm flex items-center">
+                  <span className="material-symbols-rounded text-sm mr-1">check_circle</span>
+                  <span>10% discount applied!</span>
                 </div>
-                
-                <div className="font-medium">
-                  ₹{item.price * item.quantity}
+              )}
+            </div>
+
+            {/* Payment Method */}
+            <div className="bg-white rounded-xl shadow-sm p-4 mb-4 text-black dark:text-black">
+              <h2 className="font-medium text-gray-700 mb-3">Payment Method</h2>
+              <div className="space-y-2">
+                {['upi', 'card', 'cod'].map((method) => (
+                  <label key={method} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value={method}
+                        checked={paymentMethod === method}
+                        onChange={() => setPaymentMethod(method)}
+                        className="mr-3"
+                      />
+                      <div className="capitalize font-medium">
+                        {method === 'cod' ? 'Cash on Delivery' : method.toUpperCase()}
+                      </div>
+                    </div>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Price Details */}
+            <div className="bg-white rounded-xl shadow-sm p-4 mb-6 text-black dark:text-black">
+              <h2 className="font-medium text-gray-700 mb-3">Price Details</h2>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span>Subtotal</span>
+                  <span>₹{subtotal}</span>
+                </div>
+                {promoApplied && (
+                  <div className="flex justify-between text-green-600">
+                    <span>Discount</span>
+                    <span>- ₹{discount}</span>
+                  </div>
+                )}
+                <div className="flex justify-between">
+                  <span>Delivery Fee</span>
+                  <span>₹{deliveryFee}</span>
+                </div>
+                <div className="flex justify-between font-semibold text-base pt-2 border-t mt-2">
+                  <span>Total</span>
+                  <span>₹{totalAmount}</span>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-        
-        {/* Delivery Details */}
-        <div className="bg-white rounded-xl shadow-sm p-4 mb-4">
-          <div className="flex justify-between items-center mb-3">
-            <h2 className="font-medium text-gray-700">Delivery Details</h2>
-            <Link href="#" className="text-primary text-sm">Change</Link>
-          </div>
-          
-          <div className="flex items-start mb-4">
-            <span className="material-symbols-rounded text-gray-500 mr-3">location_on</span>
-            <div>
-              <p className="font-medium">Office</p>
-              <p className="text-sm text-gray-600">123 Work Street, Building A, Floor 5</p>
             </div>
-          </div>
-          
-          <div className="flex items-start">
-            <span className="material-symbols-rounded text-gray-500 mr-3">schedule</span>
-            <div>
-              <p className="font-medium">Delivery Time</p>
-              <p className="text-sm text-gray-600">15-20 minutes</p>
-            </div>
-          </div>
-        </div>
-        
-        {/* Promo Code */}
-        <div className="bg-white rounded-xl shadow-sm p-4 mb-4">
-          <h2 className="font-medium text-gray-700 mb-3">Promo Code</h2>
-          
-          <div className="flex">
-            <input
-              type="text"
-              className="flex-1 border border-gray-300 rounded-l-lg px-3 py-2"
-              placeholder="Enter promo code"
-              value={promoCode}
-              onChange={(e) => setPromoCode(e.target.value)}
-            />
-            <button 
-              className="bg-primary text-white px-4 py-2 rounded-r-lg"
-              onClick={handleApplyPromo}
+
+            {/* Order Button */}
+            <button
+              onClick={handlePlaceOrder}
+              className="w-full bg-primary text-white py-3 rounded-lg font-medium"
             >
-              Apply
+              Place Order - ₹{totalAmount}
             </button>
-          </div>
-          
-          {promoApplied && (
-            <div className="mt-2 text-green-600 text-sm flex items-center">
-              <span className="material-symbols-rounded text-sm mr-1">check_circle</span>
-              <span>10% discount applied!</span>
-            </div>
-          )}
-        </div>
-        
-        {/* Payment Method */}
-        <div className="bg-white rounded-xl shadow-sm p-4 mb-4">
-          <h2 className="font-medium text-gray-700 mb-3">Payment Method</h2>
-          
-          <div className="space-y-2">
-            <label className="flex items-center justify-between p-3 border rounded-lg">
-              <div className="flex items-center">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="upi"
-                  checked={paymentMethod === 'upi'}
-                  onChange={() => setPaymentMethod('upi')}
-                  className="mr-3"
-                />
-                <div className="flex items-center">
-                  <span className="material-symbols-rounded text-primary mr-2">currency_rupee</span>
-                  <div>
-                    <div className="font-medium">UPI</div>
-                    <div className="text-xs text-gray-500">Google Pay, PhonePe, Paytm</div>
-                  </div>
-                </div>
-              </div>
-            </label>
-            
-            <label className="flex items-center justify-between p-3 border rounded-lg">
-              <div className="flex items-center">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="card"
-                  checked={paymentMethod === 'card'}
-                  onChange={() => setPaymentMethod('card')}
-                  className="mr-3"
-                />
-                <div className="flex items-center">
-                  <span className="material-symbols-rounded text-primary mr-2">credit_card</span>
-                  <div>
-                    <div className="font-medium">Credit/Debit Card</div>
-                    <div className="text-xs text-gray-500">Visa, Mastercard, RuPay</div>
-                  </div>
-                </div>
-              </div>
-            </label>
-            
-            <label className="flex items-center justify-between p-3 border rounded-lg">
-              <div className="flex items-center">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="cod"
-                  checked={paymentMethod === 'cod'}
-                  onChange={() => setPaymentMethod('cod')}
-                  className="mr-3"
-                />
-                <div className="flex items-center">
-                  <span className="material-symbols-rounded text-primary mr-2">payments</span>
-                  <div>
-                    <div className="font-medium">Cash on Delivery</div>
-                    <div className="text-xs text-gray-500">Pay when you receive your order</div>
-                  </div>
-                </div>
-              </div>
-            </label>
-          </div>
-        </div>
-        
-        {/* Order Summary */}
-        <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
-          <h2 className="font-medium text-gray-700 mb-3">Price Details</h2>
-          
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span>Subtotal</span>
-              <span>₹{subtotal}</span>
-            </div>
-            
-            {promoApplied && (
-              <div className="flex justify-between text-green-600">
-                <span>Discount</span>
-                <span>- ₹{discount}</span>
-              </div>
-            )}
-            
-            <div className="flex justify-between">
-              <span>Delivery Fee</span>
-              <span>₹{deliveryFee}</span>
-            </div>
-            
-            <div className="flex justify-between font-semibold text-base pt-2 border-t mt-2">
-              <span>Total</span>
-              <span>₹{totalAmount}</span>
-            </div>
-          </div>
-        </div>
-        
-        {/* Place Order Button */}
-        <button 
-          className="w-full bg-primary text-white py-3 rounded-lg font-medium"
-          onClick={handlePlaceOrder}
-        >
-          Place Order - ₹{totalAmount}
-        </button>
+          </>
+        )}
       </div>
     </AppLayout>
   );
 }
+

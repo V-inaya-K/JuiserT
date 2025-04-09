@@ -13,11 +13,11 @@ const JuiceCategories = () => {
   return (
     <div className="my-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Categories</h2>
+        <h2 className="text-lg font-semibold ">Categories</h2>
         <Link href="/categories" className="text-primary text-sm">View All</Link>
       </div>
       
-      <div className="flex overflow-x-auto pb-2 gap-3 no-scrollbar">
+      <div className="flex overflow-x-auto pb-2 gap-3 no-scrollbar ">
         {categories.map(category => (
           <Link 
             href={`/category/${category.id}`} 

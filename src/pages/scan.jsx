@@ -39,7 +39,7 @@ export default function ScanPage() {
               <div className="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mr-3">1</div>
               <div>
                 <h3 className="font-medium">Scan QR Code</h3>
-                <p className="text-sm text-gray-600">Find the QR code on your table at the juice shop</p>
+                <p className="text-sm  text-gray-800 dark:text-white">Find the QR code on your table at the juice shop</p>
               </div>
             </div>
             
@@ -47,7 +47,7 @@ export default function ScanPage() {
               <div className="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mr-3">2</div>
               <div>
                 <h3 className="font-medium">Browse & Order</h3>
-                <p className="text-sm text-gray-600">Select your favorite juices and customize them</p>
+                <p className="text-sm text-gray-800 dark:text-white">Select your favorite juices and customize them</p>
               </div>
             </div>
             
@@ -55,7 +55,7 @@ export default function ScanPage() {
               <div className="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mr-3">3</div>
               <div>
                 <h3 className="font-medium">Pay & Enjoy</h3>
-                <p className="text-sm text-gray-600">Pay securely through the app and enjoy your juice</p>
+                <p className="text-sm text-gray-800 dark:text-white">Pay securely through the app and enjoy your juice</p>
               </div>
             </div>
           </div>

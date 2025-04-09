@@ -51,7 +51,7 @@ export default function JoostPassPage() {
   
   return (
     <AppLayout title="JoosT Pass - Subscription Plans">
-      <div className="py-4">
+      <div className="py-4 text-black dark:text-black">
         <div className="bg-gradient-to-br from-accent to-accent-dark text-white p-6 rounded-xl mb-6">
           <h1 className="text-2xl font-bold mb-2">JoosT Pass</h1>
           <p className="text-white/90 mb-4">Subscribe to our health plans for regular juice deliveries and exclusive benefits</p>
@@ -125,7 +125,7 @@ export default function JoostPassPage() {
           </div>
         </div>
         
-        <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
+        <div className="bg-white rounded-xl shadow-sm p-4 mb-6 text-black dark:text-black">
           <h2 className="text-lg font-semibold mb-4">JoosT Pass Benefits</h2>
           
           <div className="space-y-4">
@@ -171,7 +171,7 @@ export default function JoostPassPage() {
           </div>
         </div>
         
-        <div className="bg-white rounded-xl shadow-sm p-4">
+        <div className="bg-white rounded-xl shadow-sm p-4 text-black dark:text-black">
           <h2 className="text-lg font-semibold mb-2">How It Works</h2>
           
           <div className="space-y-4 mt-4">
@@ -207,7 +207,7 @@ export default function JoostPassPage() {
           </div>
         </div>
         
-        <div className="fixed bottom-16 left-0 right-0 bg-white py-3 px-4 shadow-lg border-t">
+        <div className="bg-white rounded-xl shadow-sm p-4 mt-6">
           <button className="w-full bg-accent text-white py-3 rounded-lg font-medium flex justify-center items-center">
             <span className="material-symbols-rounded mr-2">notifications</span>
             Notify Me When Available
